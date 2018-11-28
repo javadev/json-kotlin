@@ -352,6 +352,7 @@ object Json {
     }
   }
   object JsonValue {
+    @Suppress("UNCHECKED_CAST")
     fun writeJson(value:Any?, builder:JsonStringBuilder) {
       if (value == null)
       {
