@@ -24,7 +24,6 @@
 package com.github.jsonkotlin
 
 import java.nio.charset.Charset
-import java.util.HashMap
 
 class Base32 private constructor(alphabet:String) {
   private val digits:CharArray
@@ -61,7 +60,7 @@ class Base32 private constructor(alphabet:String) {
         throw DecodingException("Illegal character: " + c)
       }
       buffer = buffer shl shift
-      buffer = buffer or (charMap.get(c) and mask)
+      buffer = buffer or (charMap.getValue(c) and mask)
       bitsLeft += shift
       if (bitsLeft >= 8)
       {
@@ -88,7 +87,7 @@ class Base32 private constructor(alphabet:String) {
         if (next < data.size)
         {
           buffer = buffer shl 8
-          buffer = buffer or (data[next++] and 0xff)
+          buffer = buffer or (data[next++].toInt() and 0xff)
           bitsLeft += 8
         }
         else

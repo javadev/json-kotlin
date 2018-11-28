@@ -432,7 +432,7 @@ object Json {
       {
         JsonArray.writeJson(value as CharArray, builder)
       }
-      else if (value is Array<Any>)
+      else if (value is Array<*>)
       {
         JsonArray.writeJson(value as Array<Any>, builder)
       }
@@ -458,7 +458,8 @@ object Json {
       val result = StringBuilder()
       var underlineCount = 0
       val lastChars = StringBuilder()
-      outer@ for (i in 0 until length)
+      var i = 0
+      outer@ while (i < length)
       {
         val ch = name.get(i)
         if (ch == '_')
@@ -488,6 +489,7 @@ object Json {
                   i = j
                   underlineCount = 0
                   lastChars.setLength(0)
+                  i += 1
                   continue@outer
                 }
               }
@@ -501,14 +503,11 @@ object Json {
           result.append(lastChars).append(ch)
           lastChars.setLength(0)
         }
+        i += 1
       }
       return result.append(lastChars).toString()
     }
     fun escape(s:String):String {
-      if (s == null)
-      {
-        return null
-      }
       val sb = StringBuilder()
       escape(s, sb)
       return sb.toString()
@@ -522,7 +521,6 @@ object Json {
           '"' -> sb.append("\\\"")
           '\\' -> sb.append("\\\\")
           '\b' -> sb.append("\\b")
-          '\f' -> sb.append("\\f")
           '\n' -> sb.append("\\n")
           '\r' -> sb.append("\\r")
           '\t' -> sb.append("\\t")
@@ -547,9 +545,9 @@ object Json {
     }
   }
   class ParseException(message:String, offset:Int, line:Int, column:Int):RuntimeException(message + " at " + line + ":" + column) {
-    val offset:Int = 0
-    val line:Int = 0
-    val column:Int = 0
+    var offset:Int = 0
+    var line:Int = 0
+    var column:Int = 0
     init{
       this.offset = offset
       this.line = line
@@ -557,14 +555,14 @@ object Json {
     }
   }
   class JsonParser(string:String) {
-    private val json:String
-    private val index:Int = 0
-    private val line:Int = 0
-    private val lineOffset:Int = 0
-    private val current:Int = 0
-    private val captureBuffer:StringBuilder
-    private val captureStart:Int = 0
-    private val isWhiteSpace:Boolean
+    private var json:String
+    private var index:Int = 0
+    private var line:Int = 0
+    private var lineOffset:Int = 0
+    private var current:Int = 0
+    private var captureBuffer:StringBuilder = StringBuilder()
+    private var captureStart:Int = 0
+    private var isWhiteSpace:Boolean = false
     get() {
       return current == ' '.toInt() || current == '\t'.toInt() || current == '\n'.toInt() || current == '\r'.toInt()
     }
@@ -585,7 +583,7 @@ object Json {
       line = 1
       captureStart = -1
     }
-    fun parse():Any {
+    fun parse():Any? {
       read()
       skipWhiteSpace()
       val result = readValue()
@@ -596,21 +594,22 @@ object Json {
       }
       return result
     }
-    private fun readValue():Any {
+    private fun readValue():Any? {
       when (current) {
-        'n' -> return readNull()
-        't' -> return readTrue()
-        'f' -> return readFalse()
-        '"' -> return readString()
-        '[' -> return readArray()
-        '{' -> return readObject()
-        '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> return readNumber()
+        'n'.toInt() -> return readNull()
+        't'.toInt() -> return readTrue()
+        'f'.toInt() -> return readFalse()
+        '"'.toInt() -> return readString()
+        '['.toInt() -> return readArray()
+        '{'.toInt() -> return readObject()
+        '-'.toInt(), '0'.toInt(), '1'.toInt(), '2'.toInt(), '3'.toInt(), '4'.toInt(),
+        '5'.toInt(), '6'.toInt(), '7'.toInt(), '8'.toInt(), '9'.toInt() -> return readNumber()
         else -> throw expected("value")
       }
     }
-    private fun readArray():List<Any> {
+    private fun readArray():List<Any?> {
       read()
-      val array = U.newArrayList()
+      val array = ArrayList<Any?>()
       skipWhiteSpace()
       if (readChar(']'))
       {
@@ -629,9 +628,9 @@ object Json {
       }
       return array
     }
-    private fun readObject():Map<String, Any> {
+    private fun readObject():MutableMap<String, Any?> {
       read()
-      val `object` = U.newLinkedHashMap()
+      val `object` = LinkedHashMap<String, Any?>()
       skipWhiteSpace()
       if (readChar('}'))
       {
@@ -664,7 +663,7 @@ object Json {
       }
       return readString()
     }
-    private fun readNull():String {
+    private fun readNull():String? {
       read()
       readRequiredChar('u')
       readRequiredChar('l')
@@ -719,15 +718,14 @@ object Json {
     private fun readEscape() {
       read()
       when (current) {
-        '"', '/', '\\' -> captureBuffer.append(current.toChar())
-        'b' -> captureBuffer.append('\b')
-        'f' -> captureBuffer.append('\f')
-        'n' -> captureBuffer.append('\n')
-        'r' -> captureBuffer.append('\r')
-        't' -> captureBuffer.append('\t')
-        'u' -> {
+        '"'.toInt(), '/'.toInt(), '\\'.toInt() -> captureBuffer.append(current.toChar())
+        'b'.toInt() -> captureBuffer.append('\b')
+        'n'.toInt() -> captureBuffer.append('\n')
+        'r'.toInt() -> captureBuffer.append('\r')
+        't'.toInt() -> captureBuffer.append('\t')
+        'u'.toInt() -> {
           val hexChars = CharArray(4)
-          val isHexCharsDigits = true
+          var isHexCharsDigits = true
           for (i in 0..3)
           {
             read()
@@ -918,7 +916,7 @@ object Json {
     JsonObject.writeJson(map, builder)
     return builder.toString()
   }
-  fun fromJson(string:String):Any {
+  fun fromJson(string:String):Any? {
     return JsonParser(string).parse()
   }
   fun formatJson(json:String, identStep:JsonStringBuilder.Step):String {
