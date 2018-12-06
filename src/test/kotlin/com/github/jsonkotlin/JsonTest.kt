@@ -44,64 +44,56 @@ class JsonTest {
     }, builder)
     assertEquals("[\n  null\n]", builder.toString())
   }
-/*
   @Test
   fun testJsonArrayCollection() {
-    assertEquals("[\n \"First item\",\n \"Second item\"\n]",
+    assertEquals("[\n  \"First item\",\n  \"Second item\"\n]",
                  Json.toJson(Arrays.asList<String>("First item", "Second item")))
-    assertEquals("[\n [\n 1,\n 2\n ]\n]",
-                 Json.toJson(Arrays.asList<Byte>(*byteArrayOf(1, 2))))
-    assertEquals("[\n [\n 1,\n 2\n ]\n]",
-                 Json.toJson(Arrays.asList<Short>(*shortArrayOf(1, 2))))
-    assertEquals("[\n [\n 1,\n 2\n ]\n]",
-                 Json.toJson(Arrays.asList<Int>(*intArrayOf(1, 2))))
-    assertEquals("[\n [\n 1,\n 2\n ]\n]",
-                 Json.toJson(Arrays.asList<Long>(*longArrayOf(1, 2))))
-    assertEquals("[\n [\n 1.0,\n 2.0\n ]\n]",
-                 Json.toJson(Arrays.asList<Float>(*floatArrayOf(1f, 2f))))
-    assertEquals("[\n [\n 1.0,\n 2.0\n ]\n]",
-                 Json.toJson(Arrays.asList<Double>(*doubleArrayOf(1.0, 2.0))))
-    assertEquals("[\n [\n \"1\",\n \"2\"\n ]\n]",
-                 Json.toJson(Arrays.asList<Char>(*charArrayOf('1', '2'))))
-    assertEquals("[\n [\n true,\n false,\n true\n ]\n]",
-                 Json.toJson(Arrays.asList<Boolean>(*booleanArrayOf(true, false, true))))
-    assertEquals("[\n 1.0,\n 2.0\n]",
-                 Json.toJson(Arrays.asList<Float>(*arrayOf<Float>(1f, 2f))))
-    assertEquals("[\n 1.0,\n 2.0\n]",
-                 Json.toJson(Arrays.asList<Double>(*arrayOf<Double>(1.0, 2.0))))
-    assertEquals("[\n true,\n false,\n true\n]",
-                 Json.toJson(Arrays.asList<Boolean>(*arrayOf<Boolean>(true, false, true))))
-    assertEquals("[\n [\n \"First item\",\n \"Second item\"\n ]\n]",
-                 Json.toJson(Arrays.asList<String>(Arrays.asList<T>("First item", "Second item"))))
-    assertEquals("[\n {\n \"1\": \"First item\",\n \"2\": \"Second item\",\n \"3\": null\n }\n]",
-                 Json.toJson(Arrays.asList<T>(object:LinkedHashMap() {
-                   init{
-                     put("1", "First item")
-                     put("2", "Second item")
-                     put("3", null!!)
-                   }
-                 })))
-    assertEquals("[\n null\n]", Json.toJson(Arrays.asList<T>(*arrayOf<String>(null as String?))))
-    assertEquals("null", Json.toJson(null as Collection<*>?))
+    assertEquals("[\n  [\n    1,\n    2\n  ]\n]",
+                 Json.toJson(Arrays.asList<Any>(byteArrayOf(1, 2))))
+    assertEquals("[\n  [\n    1,\n    2\n  ]\n]",
+                 Json.toJson(Arrays.asList<Any>(shortArrayOf(1, 2))))
+    assertEquals("[\n  [\n    1,\n    2\n  ]\n]",
+                 Json.toJson(Arrays.asList<Any>(intArrayOf(1, 2))))
+    assertEquals("[\n  [\n    1,\n    2\n  ]\n]",
+                 Json.toJson(Arrays.asList<Any>(longArrayOf(1, 2))))
+    assertEquals("[\n  [\n    1.0,\n    2.0\n  ]\n]",
+                 Json.toJson(Arrays.asList<Any>(floatArrayOf(1f, 2f))))
+    assertEquals("[\n  [\n    1.0,\n    2.0\n  ]\n]",
+                 Json.toJson(Arrays.asList<Any>(doubleArrayOf(1.0, 2.0))))
+    assertEquals("[\n  [\n    \"1\",\n    \"2\"\n  ]\n]",
+                 Json.toJson(Arrays.asList<Any>(charArrayOf('1', '2'))))
+    assertEquals("[\n  [\n    true,\n    false,\n    true\n  ]\n]",
+                 Json.toJson(Arrays.asList<Any>(booleanArrayOf(true, false, true))))
+    assertEquals("[\n  [\n    1.0,\n    2.0\n  ]\n]",
+                 Json.toJson(Arrays.asList<Any>(arrayOf<Float>(1f, 2f))))
+    assertEquals("[\n  [\n    1.0,\n    2.0\n  ]\n]",
+                 Json.toJson(Arrays.asList<Any>(arrayOf<Double>(1.0, 2.0))))
+    assertEquals("[\n  [\n    true,\n    false,\n    true\n  ]\n]",
+                 Json.toJson(Arrays.asList<Any>(arrayOf<Boolean>(true, false, true))))
+    assertEquals("[\n  [\n    \"First item\",\n    \"Second item\"\n  ]\n]",
+                 Json.toJson(Arrays.asList<Any>(Arrays.asList<String>("First item", "Second item"))))
+    val testMap = LinkedHashMap<String, String>()
+    testMap.put("1", "First item")
+    testMap.put("2", "Second item")
+    assertEquals("[\n  {\n    \"1\": \"First item\",\n    \"2\": \"Second item\"\n  }\n]",
+                 Json.toJson(Arrays.asList<Any>(testMap)))
+//    assertEquals("[\n null\n]", Json.toJson(Arrays.asList<Any>(arrayOf<String>(null as String?))))
+//    assertEquals("null", Json.toJson(null as Collection<*>?))
     class Test {
       public override fun toString():String {
         return "test"
       }
     }
-    assertEquals("[\n [\n test,\n test\n ]\n]",
-                 Json.toJson(object:ArrayList<Array<Test>>() {
-                   init{
-                     add(arrayOf<Test>(Test(), Test()))
-                   }
-                 }))
+    val testArray = ArrayList<Array<Test>>()
+    testArray.add(arrayOf<Test>(Test(), Test()))
+    assertEquals("[\n  [\n    test,\n    test\n  ]\n]",
+                 Json.toJson(testArray))
   }
   @Test
   fun escape() {
-    assertNull(Json.JsonValue.escape(null))
     assertEquals("\\\"", Json.JsonValue.escape("\""))
     assertEquals("\\\\", Json.JsonValue.escape("\\"))
     assertEquals("\\b", Json.JsonValue.escape("\b"))
-    assertEquals("\\f", Json.JsonValue.escape("\f"))
     assertEquals("\\n", Json.JsonValue.escape("\n"))
     assertEquals("\\r", Json.JsonValue.escape("\r"))
     assertEquals("\\t", Json.JsonValue.escape("\t"))
@@ -120,160 +112,158 @@ class JsonTest {
   }
   @Test
   fun testByteArrayToString() {
-    val builder:Json.JsonStringBuilder
-    builder = JsonStringBuilder()
-    Json.JsonArray.writeJson(null as ByteArray?, builder)
-    assertEquals("null", builder.toString())
+    var builder:Json.JsonStringBuilder
+//    builder = JsonStringBuilder()
+//    Json.JsonArray.writeJson(null as ByteArray?, builder)
+//    assertEquals("null", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(ByteArray(0), builder)
     assertEquals("[]", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(byteArrayOf(12), builder)
-    assertEquals("[\n 12\n]", builder.toString())
+    assertEquals("[\n  12\n]", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(byteArrayOf(-7, 22, 86, -99), builder)
-    assertEquals("[\n -7,\n 22,\n 86,\n -99\n]", builder.toString())
+    assertEquals("[\n  -7,\n  22,\n  86,\n  -99\n]", builder.toString())
   }
   @Test
   fun testShortArrayToString() {
-    val builder:JsonStringBuilder
-    builder = JsonStringBuilder()
-    Json.JsonArray.writeJson(null as ShortArray?, builder)
-    assertEquals("null", builder.toString())
+    var builder:JsonStringBuilder
+//    builder = JsonStringBuilder()
+//    Json.JsonArray.writeJson(null as ShortArray?, builder)
+//    assertEquals("null", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(ShortArray(0), builder)
     assertEquals("[]", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(shortArrayOf(12), builder)
-    assertEquals("[\n 12\n]", builder.toString())
+    assertEquals("[\n  12\n]", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(shortArrayOf(-7, 22, 86, -99), builder)
-    assertEquals("[\n -7,\n 22,\n 86,\n -99\n]", builder.toString())
+    assertEquals("[\n  -7,\n  22,\n  86,\n  -99\n]", builder.toString())
   }
   @Test
   fun testIntArrayToString() {
-    val builder:Json.JsonStringBuilder
-    builder = JsonStringBuilder()
-    Json.JsonArray.writeJson(null as IntArray?, builder)
-    assertEquals("null", builder.toString())
+    var builder:Json.JsonStringBuilder
+//    builder = JsonStringBuilder()
+//    Json.JsonArray.writeJson(null as IntArray?, builder)
+//    assertEquals("null", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(IntArray(0), builder)
     assertEquals("[]", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(intArrayOf(12), builder)
-    assertEquals("[\n 12\n]", builder.toString())
+    assertEquals("[\n  12\n]", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(intArrayOf(-7, 22, 86, -99), builder)
-    assertEquals("[\n -7,\n 22,\n 86,\n -99\n]", builder.toString())
+    assertEquals("[\n  -7,\n  22,\n  86,\n  -99\n]", builder.toString())
   }
   @Test
   fun testLongArrayToString() {
-    val builder:JsonStringBuilder
-    builder = JsonStringBuilder()
-    Json.JsonArray.writeJson(null as LongArray?, builder)
-    assertEquals("null", builder.toString())
+    var builder:JsonStringBuilder
+//    builder = JsonStringBuilder()
+//    Json.JsonArray.writeJson(null as LongArray?, builder)
+//    assertEquals("null", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(LongArray(0), builder)
     assertEquals("[]", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(longArrayOf(12), builder)
-    assertEquals("[\n 12\n]", builder.toString())
+    assertEquals("[\n  12\n]", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(longArrayOf(-7, 22, 86, -99), builder)
-    assertEquals("[\n -7,\n 22,\n 86,\n -99\n]", builder.toString())
+    assertEquals("[\n  -7,\n  22,\n  86,\n  -99\n]", builder.toString())
   }
   @Test
   fun testFloatArrayToString() {
-    val builder:JsonStringBuilder
-    builder = JsonStringBuilder()
-    Json.JsonArray.writeJson(null as FloatArray?, builder)
-    assertEquals("null", builder.toString())
+    var builder:JsonStringBuilder
+//    builder = JsonStringBuilder()
+//    Json.JsonArray.writeJson(null as FloatArray?, builder)
+//    assertEquals("null", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(FloatArray(0), builder)
     assertEquals("[]", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(floatArrayOf(12.8f), builder)
-    assertEquals("[\n 12.8\n]", builder.toString())
+    assertEquals("[\n  12.8\n]", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(floatArrayOf(-7.1f, 22.234f, 86.7f, -99.02f), builder)
-    assertEquals("[\n -7.1,\n 22.234,\n 86.7,\n -99.02\n]", builder.toString())
+    assertEquals("[\n  -7.1,\n  22.234,\n  86.7,\n  -99.02\n]", builder.toString())
   }
   @Test
   fun testDoubleArrayToString() {
-    val builder:JsonStringBuilder
-    builder = JsonStringBuilder()
-    Json.JsonArray.writeJson(null as DoubleArray?, builder)
-    assertEquals("null", builder.toString())
+    var builder:JsonStringBuilder
+//    builder = JsonStringBuilder()
+//    Json.JsonArray.writeJson(null as DoubleArray?, builder)
+//    assertEquals("null", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(DoubleArray(0), builder)
     assertEquals("[]", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(doubleArrayOf(12.8), builder)
-    assertEquals("[\n 12.8\n]", builder.toString())
+    assertEquals("[\n  12.8\n]", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(doubleArrayOf(-7.1, 22.234, 86.7, -99.02), builder)
-    assertEquals("[\n -7.1,\n 22.234,\n 86.7,\n -99.02\n]", builder.toString())
+    assertEquals("[\n  -7.1,\n  22.234,\n  86.7,\n  -99.02\n]", builder.toString())
   }
   @Test
   fun testBooleanArrayToString() {
-    val builder:JsonStringBuilder
-    builder = JsonStringBuilder()
-    Json.JsonArray.writeJson(null as BooleanArray?, builder)
-    assertEquals("null", builder.toString())
+    var builder:JsonStringBuilder
+//    builder = JsonStringBuilder()
+//    Json.JsonArray.writeJson(null as BooleanArray?, builder)
+//    assertEquals("null", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(BooleanArray(0), builder)
     assertEquals("[]", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(booleanArrayOf(true), builder)
-    assertEquals("[\n true\n]", builder.toString())
+    assertEquals("[\n  true\n]", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(booleanArrayOf(true, false, true), builder)
-    assertEquals("[\n true,\n false,\n true\n]", builder.toString())
+    assertEquals("[\n  true,\n  false,\n  true\n]", builder.toString())
   }
   @Test
   fun testCharArrayToString() {
-    val builder:JsonStringBuilder
-    builder = JsonStringBuilder()
-    Json.JsonArray.writeJson(null as CharArray?, builder)
-    assertEquals("null", builder.toString())
+    var builder:JsonStringBuilder
+//    builder = JsonStringBuilder()
+//    Json.JsonArray.writeJson(null as CharArray?, builder)
+//    assertEquals("null", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(CharArray(0), builder)
     assertEquals("[]", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(charArrayOf('a'), builder)
-    assertEquals("[\n \"a\"\n]", builder.toString())
+    assertEquals("[\n  \"a\"\n]", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(charArrayOf('a', 'b', 'c'), builder)
-    assertEquals("[\n \"a\",\n \"b\",\n \"c\"\n]", builder.toString())
+    assertEquals("[\n  \"a\",\n  \"b\",\n  \"c\"\n]", builder.toString())
   }
   @Test
   fun testObjectArrayToString() {
-    val builder:JsonStringBuilder
-    builder = JsonStringBuilder()
-    Json.JsonArray.writeJson(null as Array<Any>?, builder)
-    assertEquals("null", builder.toString())
-    builder = JsonStringBuilder()
-    Json.JsonArray.writeJson(arrayOfNulls<Any>(0), builder)
-    assertEquals("[]", builder.toString())
+    var builder:JsonStringBuilder
+//    builder = JsonStringBuilder()
+//    Json.JsonArray.writeJson(null as Array<Any>?, builder)
+//    assertEquals("null", builder.toString())
+//    builder = JsonStringBuilder()
+//    Json.JsonArray.writeJson(arrayOfNulls<Any>(0), builder)
+//    assertEquals("[]", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(arrayOf<Any>("Hello"), builder)
-    assertEquals("[\n \"Hello\"\n]", builder.toString())
+    assertEquals("[\n  \"Hello\"\n]", builder.toString())
     builder = JsonStringBuilder()
     Json.JsonArray.writeJson(arrayOf<Any>("Hello", Integer.valueOf(12), intArrayOf(1, 2, 3)), builder)
-    assertEquals("[\n \"Hello\",\n 12,\n [\n 1,\n 2,\n 3\n ]\n]", builder.toString())
+    assertEquals("[\n  \"Hello\",\n  12,\n  [\n    1,\n    2,\n    3\n  ]\n]", builder.toString())
   }
   @Test
   fun toJsonFromList() {
     val testList = ArrayList<String>()
     testList.add("First item")
     testList.add("Second item")
-    assertEquals("[\n \"First item\",\n \"Second item\"\n]", Json.toJson(testList))
-    assertEquals("[\n \"First item\",\n \"Second item\"\n]", U(testList).toJson())
-    assertEquals("[\n \"First item\",\n \"Second item\"\n]", Json.chain(testList).toJson().item())
-    assertEquals("[\n null\n]", Json.toJson(Arrays.asList<T>(java.lang.Double.NaN)))
-    assertEquals("[\n null\n]", Json.toJson(Arrays.asList<T>(java.lang.Double.POSITIVE_INFINITY)))
-    assertEquals("[\n null\n]", Json.toJson(Arrays.asList<T>(java.lang.Float.NaN)))
-    assertEquals("[\n null\n]", Json.toJson(Arrays.asList<T>(java.lang.Float.POSITIVE_INFINITY)))
+    assertEquals("[\n  \"First item\",\n  \"Second item\"\n]", Json.toJson(testList))
+    assertEquals("[\n  null\n]", Json.toJson(Arrays.asList<Any>(java.lang.Double.NaN)))
+    assertEquals("[\n  null\n]", Json.toJson(Arrays.asList<Any>(java.lang.Double.POSITIVE_INFINITY)))
+    assertEquals("[\n  null\n]", Json.toJson(Arrays.asList<Any>(java.lang.Float.NaN)))
+    assertEquals("[\n  null\n]", Json.toJson(Arrays.asList<Any>(java.lang.Float.POSITIVE_INFINITY)))
   }
   @Test
   fun toJsonFromMap() {
@@ -284,22 +274,41 @@ class JsonTest {
     testMap2.put("", "1")
     val testMap3 = LinkedHashMap<String, String>()
     testMap3.put("__FA", "1")
-    assertEquals("{\n \"First item\": \"1\",\n \"Second item\": \"2\"\n}", Json.toJson(testMap))
-    assertEquals("null", Json.toJson(null as Map<*, *>?))
-    assertEquals("{\n \"\": \"1\"\n}", Json.toJson(testMap2))
-    assertEquals("{\n \"__FA\": \"1\"\n}", Json.toJson(testMap3))
+    assertEquals("{\n  \"First item\": \"1\",\n  \"Second item\": \"2\"\n}", Json.toJson(testMap))
+//    assertEquals("null", Json.toJson(null as Map<*, *>?))
+    assertEquals("{\n  \"\": \"1\"\n}", Json.toJson(testMap2))
+    assertEquals("{\n  \"__FA\": \"1\"\n}", Json.toJson(testMap3))
   }
   @Test
   fun toJsonFromMapFormatted() {
-    val string = ("{\n \"glossary\": {\n \"title\": \"example glossary\",\n \"GlossDiv\": {\n \"title\":"
-                  + " \"S\",\n \"GlossList\": {\n \"GlossEntry\": {\n \"ID\": \"SGML\",\n"
-                  + " \"SortAs\": \"SGML\",\n \"GlossTerm\": \"Standard Generalized Markup Language\",\n"
-                  + " \"Acronym\": \"SGML\",\n \"Abbrev\": \"ISO 8879:1986\",\n \"GlossDef\": {\n"
-                  + " \"para\": \"A meta-markup language, used to create markup languages such as DocBook.\",\n"
-                  + " \"GlossSeeAlso\": [\n \"GML\",\n \"XML\"\n ]\n"
-                  + " },\n \"GlossSee\": \"markup\"\n }\n }\n }\n }\n}")
-    assertEquals(string, Json.toJson(Json.fromJson(string) as Map<String, Any>))
+    val string = ("{\n"
+      + "  \"glossary\": {\n"
+      + "    \"title\": \"example glossary\",\n"
+      + "    \"GlossDiv\": {\n"
+      + "      \"title\": \"S\",\n"
+      + "      \"GlossList\": {\n"
+      + "        \"GlossEntry\": {\n"
+      + "          \"ID\": \"SGML\",\n"
+      + "          \"SortAs\": \"SGML\",\n"
+      + "          \"GlossTerm\": \"Standard Generalized Markup Language\",\n"
+      + "          \"Acronym\": \"SGML\",\n"
+      + "          \"Abbrev\": \"ISO 8879:1986\",\n"
+      + "          \"GlossDef\": {\n"
+      + "            \"para\": \"A meta-markup language, used to create markup languages such as DocBook.\",\n"
+      + "            \"GlossSeeAlso\": [\n"
+      + "              \"GML\",\n"
+      + "              \"XML\"\n"
+      + "            ]\n"
+      + "          },\n"
+      + "          \"GlossSee\": \"markup\"\n"
+      + "        }\n"
+      + "      }\n"
+      + "    }\n"
+      + "  }\n"
+      + "}")
+    assertEquals(string, Json.toJson(Json.fromJson(string) as Map<String, Any?>))
   }
+/*
   @Test
   fun testDecode() {
     val string = "[0,{\"1\":{\"2\":{\"3\":{\"4\":[5,{\"6\":7}]}}}}]"
@@ -369,10 +378,11 @@ class JsonTest {
   fun testJsonDecodeCyrillic() {
     assertEquals("[\n \"Текст на русском\"\n]", Json.toJson(Json.fromJson("[\"Текст на русском\"]") as List<Any>))
   }
+*/
   @Test
   fun testDecodeSpecialCharacter() {
-    assertEquals("{\n \"description\": \"c:\\\\userDescription.txt\"\n}", Json.toJson(
-      Json.fromJson("{\"description\":\"c:\\userDescription.txt\"}") as Map<String, Any>))
+    assertEquals("{\n  \"description\": \"c:\\\\userDescription.txt\"\n}", Json.toJson(
+      Json.fromJson("{\"description\":\"c:\\userDescription.txt\"}") as Map<String, Any?>))
     assertEquals("{description=c:\\userDescription.txt}", Json.fromJson(
       Json.toJson(object:LinkedHashMap<String, String>() {
         init{
@@ -391,6 +401,32 @@ class JsonTest {
   @Test
   fun testDecodeUnicode3() {
     assertEquals("[abc\\u001G/]", Json.fromJson("[\"abc\\u001G\\/\"]").toString())
+  }
+  @Test
+  fun formatJson() {
+    assertEquals("{\n   \"a\": {\n   }\n}", Json.formatJson("{\n \"a\": {\n }\n}"))
+    assertEquals("[\n]", Json.formatJson("[]"))
+    assertEquals("{\n    \"a\": {\n    }\n}",
+                 Json.formatJson("{\n  \"a\": {\n  }\n}", Json.JsonStringBuilder.Step.FOUR_SPACES))
+    assertEquals("{\"a\":{}}",
+                 Json.formatJson("{\n  \"a\": {\n  }\n}", Json.JsonStringBuilder.Step.COMPACT))
+    assertEquals("{\n\t\"a\": {\n\t}\n}",
+                 Json.formatJson("{\n  \"a\": {\n  }\n}", Json.JsonStringBuilder.Step.TABS))
+  }
+  @Test
+  fun toJsonJavaFromMap() {
+    val testMap = LinkedHashMap<String, String>()
+    testMap.put("First item", "1")
+    testMap.put("Second item", "2")
+    assertEquals("\"{\\n\"\n"
+                + " + \"  \\\"First item\\\": \\\"1\\\",\\n\"\n"
+                + " + \"  \\\"Second item\\\": \\\"2\\\"\\n\"\n"
+                + " + \"}\";", Json.toJsonJavaString(testMap))
+    assertEquals("\"[\\n\"\n"
+                + " + \"  \\\"First item\\\",\\n\"\n"
+                + " + \"  \\\"Second item\\\"\\n\"\n"
+                + " + \"]\";", Json.toJsonJavaString(Arrays.asList("First item", "Second item")))
+//    assertEquals("\"null\";", U.toJsonJavaString(null as Map?))
   }
   @Test(expected = Json.ParseException::class)
   fun testDecodeParseErr1() {
@@ -432,9 +468,9 @@ class JsonTest {
       fail("Expected ParseException")
     }
     catch (ex:Json.ParseException) {
-      ex.getOffset()
-      ex.getLine()
-      ex.getColumn()
+      ex.offset
+      ex.line
+      ex.column
       throw ex
     }
   }
@@ -454,5 +490,4 @@ class JsonTest {
   fun testDecodeParseErr14() {
     Json.fromJson("[\"abc\"][]")
   }
-*/
 }
