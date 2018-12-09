@@ -335,7 +335,7 @@ object Json {
       {
         val entry = iter.next() as Map.Entry<*, *>
         builder.fillSpaces().append(builder.type.wrapLine)
-        builder.append(JsonValue.unescapeName((entry.key).toString()))
+        builder.append(JsonValue.escape((entry.key).toString()))
         builder.append(builder.type.wrapLine)
         builder.append(':')
         if (builder.identStep != JsonStringBuilder.Step.COMPACT)
@@ -441,72 +441,6 @@ object Json {
       {
         builder.append(value.toString())
       }
-    }
-    fun unescapeName(name:String):String {
-      val length = name.length
-      if (length == 0 || "__EE__EMPTY__EE__" == name)
-      {
-        return ""
-      }
-      if ("-__EE__EMPTY__EE__" == name)
-      {
-        return "-"
-      }
-      if (!name.contains("__"))
-      {
-        return name
-      }
-      val result = StringBuilder()
-      var underlineCount = 0
-      val lastChars = StringBuilder()
-      var i = 0
-      outer@ while (i < length)
-      {
-        val ch = name.get(i)
-        if (ch == '_')
-        {
-          lastChars.append(ch)
-        }
-        else
-        {
-          if (lastChars.length == 2)
-          {
-            val nameToDecode = StringBuilder()
-            for (j in i until length)
-            {
-              if (name.get(j) == '_')
-              {
-                underlineCount += 1
-                if (underlineCount == 2)
-                {
-                  try
-                  {
-                    result.append(JsonValue.escape(Base32.decode(nameToDecode.toString())))
-                  }
-                  catch (ex:Base32.DecodingException) {
-                    result.append("__").append(JsonValue.escape(nameToDecode.toString()))
-                    .append(lastChars)
-                  }
-                  i = j
-                  underlineCount = 0
-                  lastChars.setLength(0)
-                  i += 1
-                  continue@outer
-                }
-              }
-              else
-              {
-                nameToDecode.append(name.get(j))
-                underlineCount = 0
-              }
-            }
-          }
-          result.append(lastChars).append(ch)
-          lastChars.setLength(0)
-        }
-        i += 1
-      }
-      return result.append(lastChars).toString()
     }
     fun escape(s:String):String {
       val sb = StringBuilder()
