@@ -26,9 +26,6 @@ package com.github.jsonkotlin
 import java.util.*
 import org.junit.Test
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 
 import com.github.jsonkotlin.Json.JsonStringBuilder
@@ -36,7 +33,7 @@ import com.github.jsonkotlin.Json.JsonStringBuilder
 class JsonTest {
   @Test
   fun testJsonArray() {
-    var builder = JsonStringBuilder()
+    val builder = JsonStringBuilder()
     Json.JsonArray.writeJson(object:ArrayList<String?>() {
       init{
         add(null as String?)
@@ -80,7 +77,7 @@ class JsonTest {
 //    assertEquals("[\n null\n]", Json.toJson(Arrays.asList<Any>(arrayOf<String>(null as String?))))
 //    assertEquals("null", Json.toJson(null as Collection<*>?))
     class Test {
-      public override fun toString():String {
+      override fun toString():String {
         return "test"
       }
     }
@@ -112,7 +109,7 @@ class JsonTest {
   }
   @Test
   fun testByteArrayToString() {
-    var builder:Json.JsonStringBuilder
+    var builder: JsonStringBuilder
 //    builder = JsonStringBuilder()
 //    Json.JsonArray.writeJson(null as ByteArray?, builder)
 //    assertEquals("null", builder.toString())
@@ -144,7 +141,7 @@ class JsonTest {
   }
   @Test
   fun testIntArrayToString() {
-    var builder:Json.JsonStringBuilder
+    var builder: JsonStringBuilder
 //    builder = JsonStringBuilder()
 //    Json.JsonArray.writeJson(null as IntArray?, builder)
 //    assertEquals("null", builder.toString())
@@ -306,7 +303,7 @@ class JsonTest {
       + "    }\n"
       + "  }\n"
       + "}")
-    assertEquals(string, Json.toJson(Json.fromJson(string) as Map<String, Any?>))
+    assertEquals(string, Json.toJson(Json.fromJson(string) as Map<*, *>))
   }
 /*
   @Test
@@ -382,7 +379,7 @@ class JsonTest {
   @Test
   fun testDecodeSpecialCharacter() {
     assertEquals("{\n  \"description\": \"c:\\\\userDescription.txt\"\n}", Json.toJson(
-      Json.fromJson("{\"description\":\"c:\\userDescription.txt\"}") as Map<String, Any?>))
+      Json.fromJson("{\"description\":\"c:\\userDescription.txt\"}") as Map<*, *>))
     assertEquals("{description=c:\\userDescription.txt}", Json.fromJson(
       Json.toJson(object:LinkedHashMap<String, String>() {
         init{
@@ -407,17 +404,17 @@ class JsonTest {
     assertEquals("{\n   \"a\": {\n   }\n}", Json.formatJson("{\n \"a\": {\n }\n}"))
     assertEquals("[\n]", Json.formatJson("[]"))
     assertEquals("{\n    \"a\": {\n    }\n}",
-                 Json.formatJson("{\n  \"a\": {\n  }\n}", Json.JsonStringBuilder.Step.FOUR_SPACES))
+                 Json.formatJson("{\n  \"a\": {\n  }\n}", JsonStringBuilder.Step.FOUR_SPACES))
     assertEquals("{\"a\":{}}",
-                 Json.formatJson("{\n  \"a\": {\n  }\n}", Json.JsonStringBuilder.Step.COMPACT))
+                 Json.formatJson("{\n  \"a\": {\n  }\n}", JsonStringBuilder.Step.COMPACT))
     assertEquals("{\n\t\"a\": {\n\t}\n}",
-                 Json.formatJson("{\n  \"a\": {\n  }\n}", Json.JsonStringBuilder.Step.TABS))
+                 Json.formatJson("{\n  \"a\": {\n  }\n}", JsonStringBuilder.Step.TABS))
   }
   @Test
   fun toJsonJavaFromMap() {
     val testMap = LinkedHashMap<String, String>()
-    testMap.put("First item", "1")
-    testMap.put("Second item", "2")
+    testMap["First item"] = "1"
+    testMap["Second item"] = "2"
     assertEquals("\"{\\n\"\n"
                 + " + \"  \\\"First item\\\": \\\"1\\\",\\n\"\n"
                 + " + \"  \\\"Second item\\\": \\\"2\\\"\\n\"\n"
@@ -425,7 +422,7 @@ class JsonTest {
     assertEquals("\"[\\n\"\n"
                 + " + \"  \\\"First item\\\",\\n\"\n"
                 + " + \"  \\\"Second item\\\"\\n\"\n"
-                + " + \"]\";", Json.toJsonJavaString(Arrays.asList("First item", "Second item")))
+                + " + \"]\";", Json.toJsonJavaString(listOf("First item", "Second item")))
 //    assertEquals("\"null\";", U.toJsonJavaString(null as Map?))
   }
   @Test(expected = Json.ParseException::class)

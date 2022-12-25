@@ -26,20 +26,20 @@ package com.github.jsonkotlin
 import java.util.*
 
 object Json {
-  private val NULL = "null"
+  private const val NULL = "null"
   class JsonStringBuilder {
     private val builder:StringBuilder
     var identStep:Step
     val type:Type
     private var ident:Int = 0
-    enum class Step private constructor(ident:Int) {
+    enum class Step(ident:Int) {
       TWO_SPACES(2), THREE_SPACES(3), FOUR_SPACES(4), COMPACT(0), TABS(1);
       var ident:Int = 0
       init{
         this.ident = ident
       }
     }
-    enum class Type private constructor(initial:String, newLine:String, tailLine:String, wrapLine:String) {
+    enum class Type(initial:String, newLine:String, tailLine:String, wrapLine:String) {
       PURE("", "\n", "", "\""), JAVA("\"", "\\n\"\n + \"", "\";", "\\\"");
       val initial:String
       val newLine:String
@@ -99,17 +99,12 @@ object Json {
       }
       return this
     }
-    public override fun toString():String {
+    override fun toString():String {
       return builder.toString() + type.tailLine
     }
   }
   object JsonArray {
     fun writeJson(collection:Collection<*>, builder:JsonStringBuilder) {
-      if (collection == null)
-      {
-        builder.append(NULL)
-        return
-      }
       val iter = collection.iterator()
       builder.append('[').incIdent()
       if (!collection.isEmpty())
@@ -129,11 +124,7 @@ object Json {
       builder.newLine().decIdent().fillSpaces().append(']')
     }
     fun writeJson(array:ByteArray, builder:JsonStringBuilder) {
-      if (array == null)
-      {
-        builder.append(NULL)
-      }
-      else if (array.size == 0)
+      if (array.isEmpty())
       {
         builder.append("[]")
       }
@@ -150,11 +141,7 @@ object Json {
       }
     }
     fun writeJson(array:ShortArray, builder:JsonStringBuilder) {
-      if (array == null)
-      {
-        builder.append(NULL)
-      }
-      else if (array.size == 0)
+      if (array.isEmpty())
       {
         builder.append("[]")
       }
@@ -171,11 +158,7 @@ object Json {
       }
     }
     fun writeJson(array:IntArray, builder:JsonStringBuilder) {
-      if (array == null)
-      {
-        builder.append(NULL)
-      }
-      else if (array.size == 0)
+      if (array.size == 0)
       {
         builder.append("[]")
       }
@@ -192,11 +175,7 @@ object Json {
       }
     }
     fun writeJson(array:LongArray, builder:JsonStringBuilder) {
-      if (array == null)
-      {
-        builder.append(NULL)
-      }
-      else if (array.size == 0)
+      if (array.size == 0)
       {
         builder.append("[]")
       }
@@ -213,11 +192,7 @@ object Json {
       }
     }
     fun writeJson(array:FloatArray, builder:JsonStringBuilder) {
-      if (array == null)
-      {
-        builder.append(NULL)
-      }
-      else if (array.size == 0)
+      if (array.size == 0)
       {
         builder.append("[]")
       }
@@ -234,11 +209,7 @@ object Json {
       }
     }
     fun writeJson(array:DoubleArray, builder:JsonStringBuilder) {
-      if (array == null)
-      {
-        builder.append(NULL)
-      }
-      else if (array.size == 0)
+      if (array.size == 0)
       {
         builder.append("[]")
       }
@@ -255,11 +226,7 @@ object Json {
       }
     }
     fun writeJson(array:BooleanArray, builder:JsonStringBuilder) {
-      if (array == null)
-      {
-        builder.append(NULL)
-      }
-      else if (array.size == 0)
+      if (array.size == 0)
       {
         builder.append("[]")
       }
@@ -276,11 +243,7 @@ object Json {
       }
     }
     fun writeJson(array:CharArray, builder:JsonStringBuilder) {
-      if (array == null)
-      {
-        builder.append(NULL)
-      }
-      else if (array.size == 0)
+      if (array.size == 0)
       {
         builder.append("[]")
       }
@@ -297,11 +260,7 @@ object Json {
       }
     }
     fun writeJson(array:Array<Any>, builder:JsonStringBuilder) {
-      if (array == null)
-      {
-        builder.append(NULL)
-      }
-      else if (array.size == 0)
+      if (array.size == 0)
       {
         builder.append("[]")
       }
@@ -320,11 +279,6 @@ object Json {
   }
   object JsonObject {
     fun writeJson(map:Map<*, *>, builder:JsonStringBuilder) {
-      if (map == null)
-      {
-        builder.append(NULL)
-        return
-      }
       val iter = map.entries.iterator()
       builder.append('{').incIdent()
       if (!map.isEmpty())
@@ -361,11 +315,11 @@ object Json {
       else if (value is String)
       {
         builder.append(builder.type.wrapLine)
-        .append(escape(value as String)).append(builder.type.wrapLine)
+        .append(escape(value)).append(builder.type.wrapLine)
       }
       else if (value is Double)
       {
-        if ((value as Double).isInfinite() || (value as Double).isNaN())
+        if (value.isInfinite() || value.isNaN())
         {
           builder.append(NULL)
         }
@@ -376,7 +330,7 @@ object Json {
       }
       else if (value is Float)
       {
-        if ((value as Float).isInfinite() || (value as Float).isNaN())
+        if (value.isInfinite() || value.isNaN())
         {
           builder.append(NULL)
         }
@@ -395,43 +349,43 @@ object Json {
       }
       else if (value is Map<*, *>)
       {
-        JsonObject.writeJson(value as Map<*, *>, builder)
+        JsonObject.writeJson(value, builder)
       }
       else if (value is Collection<*>)
       {
-        JsonArray.writeJson(value as Collection<*>, builder)
+        JsonArray.writeJson(value, builder)
       }
       else if (value is ByteArray)
       {
-        JsonArray.writeJson(value as ByteArray, builder)
+        JsonArray.writeJson(value, builder)
       }
       else if (value is ShortArray)
       {
-        JsonArray.writeJson(value as ShortArray, builder)
+        JsonArray.writeJson(value, builder)
       }
       else if (value is IntArray)
       {
-        JsonArray.writeJson(value as IntArray, builder)
+        JsonArray.writeJson(value, builder)
       }
       else if (value is LongArray)
       {
-        JsonArray.writeJson(value as LongArray, builder)
+        JsonArray.writeJson(value, builder)
       }
       else if (value is FloatArray)
       {
-        JsonArray.writeJson(value as FloatArray, builder)
+        JsonArray.writeJson(value, builder)
       }
       else if (value is DoubleArray)
       {
-        JsonArray.writeJson(value as DoubleArray, builder)
+        JsonArray.writeJson(value, builder)
       }
       else if (value is BooleanArray)
       {
-        JsonArray.writeJson(value as BooleanArray, builder)
+        JsonArray.writeJson(value, builder)
       }
       else if (value is CharArray)
       {
-        JsonArray.writeJson(value as CharArray, builder)
+        JsonArray.writeJson(value, builder)
       }
       else if (value is Array<*>)
       {
@@ -463,7 +417,7 @@ object Json {
           else -> if ((ch <= '\u001F' || ch >= '\u007F' && ch <= '\u009F'
                        || ch >= '\u2000' && ch <= '\u20FF'))
           {
-            val ss = Integer.toHexString(ch.toInt())
+            val ss = Integer.toHexString(ch.code)
             sb.append("\\u")
             for (k in 0 until 4 - ss.length)
             {
@@ -499,15 +453,15 @@ object Json {
     private var captureStart:Int = 0
     private var isWhiteSpace:Boolean = false
     get() {
-      return current == ' '.toInt() || current == '\t'.toInt() || current == '\n'.toInt() || current == '\r'.toInt()
+      return current == ' '.code || current == '\t'.code || current == '\n'.code || current == '\r'.code
     }
     private val isDigit:Boolean
     get() {
-      return current >= '0'.toInt() && current <= '9'.toInt()
+      return current >= '0'.code && current <= '9'.code
     }
     private val isHexDigit:Boolean
     get() {
-      return (isDigit || current >= 'a'.toInt() && current <= 'f'.toInt() || (current >= 'A'.toInt() && current <= 'F'.toInt()))
+      return (isDigit || current >= 'a'.code && current <= 'f'.code || (current >= 'A'.code && current <= 'F'.code))
     }
     private val isEndOfText:Boolean
     get() {
@@ -531,14 +485,14 @@ object Json {
     }
     private fun readValue():Any? {
       when (current) {
-        'n'.toInt() -> return readNull()
-        't'.toInt() -> return readTrue()
-        'f'.toInt() -> return readFalse()
-        '"'.toInt() -> return readString()
-        '['.toInt() -> return readArray()
-        '{'.toInt() -> return readObject()
-        '-'.toInt(), '0'.toInt(), '1'.toInt(), '2'.toInt(), '3'.toInt(), '4'.toInt(),
-        '5'.toInt(), '6'.toInt(), '7'.toInt(), '8'.toInt(), '9'.toInt() -> return readNumber()
+        'n'.code -> return readNull()
+        't'.code -> return readTrue()
+        'f'.code -> return readFalse()
+        '"'.code -> return readString()
+        '['.code -> return readArray()
+        '{'.code -> return readObject()
+        '-'.code, '0'.code, '1'.code, '2'.code, '3'.code, '4'.code,
+        '5'.code, '6'.code, '7'.code, '8'.code, '9'.code -> return readNumber()
         else -> throw expected("value")
       }
     }
@@ -592,7 +546,7 @@ object Json {
       return `object`
     }
     private fun readName():String {
-      if (current != '"'.toInt())
+      if (current != '"'.code)
       {
         throw expected("name")
       }
@@ -629,9 +583,9 @@ object Json {
     private fun readString():String {
       read()
       startCapture()
-      while (current != '"'.toInt())
+      while (current != '"'.code)
       {
-        if (current == '\\'.toInt())
+        if (current == '\\'.code)
         {
           pauseCapture()
           readEscape()
@@ -653,12 +607,12 @@ object Json {
     private fun readEscape() {
       read()
       when (current) {
-        '"'.toInt(), '/'.toInt(), '\\'.toInt() -> captureBuffer.append(current.toChar())
-        'b'.toInt() -> captureBuffer.append('\b')
-        'n'.toInt() -> captureBuffer.append('\n')
-        'r'.toInt() -> captureBuffer.append('\r')
-        't'.toInt() -> captureBuffer.append('\t')
-        'u'.toInt() -> {
+        '"'.code, '/'.code, '\\'.code -> captureBuffer.append(current.toChar())
+        'b'.code -> captureBuffer.append('\b')
+        'n'.code -> captureBuffer.append('\n')
+        'r'.code -> captureBuffer.append('\r')
+        't'.code -> captureBuffer.append('\t')
+        'u'.code -> {
           val hexChars = CharArray(4)
           var isHexCharsDigits = true
           for (i in 0..3)
@@ -692,7 +646,7 @@ object Json {
       {
         throw expected("digit")
       }
-      if (firstDigit != '0'.toInt())
+      if (firstDigit != '0'.code)
       {
         while (readDigit())
         {}
@@ -756,7 +710,7 @@ object Json {
       return true
     }
     private fun readChar(ch:Char):Boolean {
-      if (current != ch.toInt())
+      if (current != ch.code)
       {
         return false
       }
@@ -783,18 +737,14 @@ object Json {
         current = -1
         return
       }
-      if (current == '\n'.toInt())
+      if (current == '\n'.code)
       {
         line++
         lineOffset = index
       }
-      current = json.get(index++).toInt()
+      current = json.get(index++).code
     }
     private fun startCapture() {
-      if (captureBuffer == null)
-      {
-        captureBuffer = StringBuilder()
-      }
       captureStart = index - 1
     }
     private fun pauseCapture() {
@@ -858,7 +808,7 @@ object Json {
     val result = fromJson(json)
     if (result is Map<*, *>)
     {
-      return toJson(result as Map<*, *>, identStep)
+      return toJson(result, identStep)
     }
     return toJson(result as List<*>, identStep)
   }
